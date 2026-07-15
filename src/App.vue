@@ -423,9 +423,25 @@ body, html {
   --primary-purple: #b062ff;
   --bg-dark: #050b14;
   --panel-bg: rgba(12, 26, 56, 0.7);
-  --border-cyan: rgba(0, 229, 255, 0.5);
+  --text-main: #ffffff; /* 新增全局文字颜色 */
   --glow-cyan: 0 0 15px rgba(0, 229, 255, 0.4);
   --glow-purple: 0 0 20px rgba(176, 98, 255, 0.3);
+}
+
+/* 浅色主题变量 */
+[data-theme="light"] {
+  --primary-cyan: #0077ff; 
+  --primary-purple: #8b3dff;
+  /* 确保整体背景不是纯白，最好带一点点灰蓝，方便衬托高光 */
+  --bg-dark: #eef2f9; 
+  
+  /* 👇 核心修改在这里：把 0.85 (太实) 改成 0.4 到 0.5 之间 (半透明) */
+  --panel-bg: rgba(255, 255, 255, 0.4); 
+  
+  --text-main: #1a1a1a;
+  
+  --glow-cyan: 0 4px 15px rgba(0, 119, 255, 0.15);
+  --glow-purple: 0 4px 20px rgba(139, 61, 255, 0.15);
 }
 
 /* ====== 全局样式清理 ====== */
@@ -437,8 +453,9 @@ body, html {
   overflow: hidden;
   box-sizing: border-box;
   
-  /* 👇 核心修改：设置从左到右的渐变背景 (浅蓝 -> 浅黑) */
-  background: linear-gradient(90deg, #2b4c7e 0%, #262626 100%);
+  color: var(--text-main);
+  background-color: var(--bg-dark);
+  transition: background-color 0.3s ease, color 0.3s ease; /* 添加平滑过渡效果 */
 }
 
 *, *::before, *::after {

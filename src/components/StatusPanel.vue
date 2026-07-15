@@ -71,18 +71,19 @@
 .data-card {
   flex: 1;
   background: var(--panel-bg);
-  /* 增强青色边框与内发光 */
-  border: 1px solid var(--border-cyan);
-  box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.15);
+  /* 使用变量和 color-mix 替换 rgba */
+  border: 1px solid color-mix(in srgb, var(--primary-cyan) 30%, transparent);
+  box-shadow: inset 0 0 20px color-mix(in srgb, var(--primary-cyan) 15%, transparent);
   border-radius: 12px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
 }
 
-/* 模拟科技边框的角标发光 */
 .data-card::before {
   content: '';
   position: absolute;
@@ -105,10 +106,11 @@
 .data-card h3 {
   font-size: 1rem;
   margin: 0 0 20px 0;
-  color: #fff;
+  color: var(--text-main);
   border-left: 4px solid var(--primary-cyan);
   padding-left: 10px;
-  text-shadow: 0 0 5px var(--primary-cyan);
+  text-shadow: 0 0 5px color-mix(in srgb, var(--primary-cyan) 60%, transparent);
+  transition: color 0.3s ease;
 }
 
 .data-content {
@@ -124,27 +126,29 @@
 
 .data-item span {
   font-size: 0.85rem;
-  color: #a0b6d4;
+  /* 副标题/单位使用混入背景色的弱化文字 */
+  color: color-mix(in srgb, var(--text-main) 70%, transparent);
   margin-bottom: 8px;
+  transition: color 0.3s ease;
 }
 
 .data-item strong {
   font-size: 1.3rem;
-  color: #fff;
+  color: var(--text-main);
+  transition: color 0.3s ease;
 }
 
-/* 重点数据高亮纯青色 */
 .highlight {
   color: var(--primary-cyan) !important;
   font-size: 1.8rem !important;
   font-weight: bold;
-  text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--primary-cyan) 50%, transparent);
 }
 
 .chart-placeholder {
   height: 40px;
-  border-bottom: 1px dashed rgba(0,229,255,0.3);
-  color: rgba(255,255,255,0.2);
+  border-bottom: 1px dashed color-mix(in srgb, var(--primary-cyan) 30%, transparent);
+  color: color-mix(in srgb, var(--text-main) 30%, transparent);
   text-align: center;
   line-height: 40px;
   font-size: 0.8rem;
