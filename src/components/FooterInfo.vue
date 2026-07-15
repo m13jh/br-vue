@@ -28,7 +28,7 @@
   justify-content: center;
   gap: 30px;
   margin-top: auto;
-  padding-bottom: 10px;
+  padding-bottom: 20vh;
 }
 
 .status-badge {

@@ -49,7 +49,7 @@ onMounted(() => {
 .header .title {
   font-size: 2.5rem;
   letter-spacing: 4px;
-  margin: 0 0 10px 0;
+  margin: 0 0 5px 0;
   /* 引入变量以适配主题，默认白色 */
   color: var(--text-main, #ffffff);
   /* 阴影也使用变量，浅色模式下不会太刺眼 */

@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="module-card">
     <div class="tech-corner top-left"></div>
     <div class="tech-corner top-right"></div>
@@ -9,11 +9,14 @@
       <div class="content-top">
         <div class="icon-stage">
           <span class="icon" v-html="currentIcon"></span>
+          
           <div class="holo-base">
-            <div class="base-layer"></div>
-            <div class="base-layer small"></div>
+            <div class="base-plate bottom-plate"></div>
+            <div class="base-plate top-plate"></div>
+            <div class="base-core"></div>
           </div>
         </div>
+        
         <h2>{{ title }}</h2>
       </div>
       
@@ -27,45 +30,44 @@ import { computed } from 'vue';
 
 const props = defineProps<{ title: string }>();
 
+// 盾牌风格的 SVG（更接近你截图中的图标）
 const icons: Record<string, string> = {
-  '标注平台': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
-  '训练平台': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>`,
-  '模型管理': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg>`
+  '标注平台': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M8 11l4-4 4 4"/><path d="M12 7v8"/></svg>`,
+  '训练平台': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="12" r="3"/><path d="M12 9v-2"/><path d="M12 17v-2"/><path d="M9 12H7"/><path d="M17 12h-2"/></svg>`,
+  '模型管理': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polygon points="12 8 8 11 12 14 16 11 12 8"/></svg>`
 };
 
-const defaultIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`;
-
-const currentIcon = computed(() => {
-  return icons[props.title] || defaultIcon;
-});
+const defaultIcon = icons['标注平台'];
+const currentIcon = computed(() => icons[props.title] || defaultIcon);
 </script>
 
 <style scoped>
 .module-card {
   flex: 1;
   position: relative;
-  border-radius: 12px;
-  /* 使用 color-mix 为主题色添加透明度 */
-  background: linear-gradient(135deg, 
-    color-mix(in srgb, var(--primary-cyan) 15%, transparent) 0%, 
-    color-mix(in srgb, var(--primary-purple) 15%, transparent) 100%
+  border-radius: 16px;
+  /* 模拟图片边缘的发光和底部的幽暗紫色 */
+  background: linear-gradient(180deg, 
+    color-mix(in srgb, var(--primary-cyan) 10%, transparent) 0%, 
+    color-mix(in srgb, var(--primary-purple) 25%, transparent) 100%
   );
-  box-shadow: var(--glow-cyan), inset 0 0 30px color-mix(in srgb, var(--primary-cyan) 20%, transparent);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  padding: 2px;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--primary-cyan) 15%, transparent), 
+              inset 0 0 40px color-mix(in srgb, var(--primary-purple) 20%, transparent);
+  transition: transform 0.3s ease, filter 0.3s ease;
+  padding: 3px; /* 留出双线边框空间 */
 }
 
-/* 渐变中空边框 */
+/* 外层细边框 */
 .module-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1px;
   background: linear-gradient(135deg, 
     var(--primary-cyan) 0%, 
-    color-mix(in srgb, var(--primary-cyan) 10%, transparent) 40%, 
-    color-mix(in srgb, var(--primary-purple) 10%, transparent) 60%, 
+    transparent 30%, 
+    transparent 70%, 
     var(--primary-purple) 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -74,12 +76,12 @@ const currentIcon = computed(() => {
   pointer-events: none;
 }
 
-/* --- 科技感边角修饰 --- */
+/* --- 加厚的折角包边 (还原图片四角细节) --- */
 .tech-corner {
   position: absolute;
-  width: 15px;
-  height: 15px;
-  border: 2px solid transparent;
+  width: 25px;
+  height: 25px;
+  border: 3px solid transparent;
   pointer-events: none;
   z-index: 2;
 }
@@ -87,46 +89,260 @@ const currentIcon = computed(() => {
   top: -1px; left: -1px;
   border-top-color: var(--primary-cyan);
   border-left-color: var(--primary-cyan);
-  border-top-left-radius: 12px;
+  border-top-left-radius: 16px;
 }
 .top-right {
   top: -1px; right: -1px;
   border-top-color: var(--primary-cyan);
   border-right-color: var(--primary-cyan);
-  border-top-right-radius: 12px;
+  border-top-right-radius: 16px;
 }
 .bottom-left {
   bottom: -1px; left: -1px;
   border-bottom-color: var(--primary-purple);
   border-left-color: var(--primary-purple);
-  border-bottom-left-radius: 12px;
+  border-bottom-left-radius: 16px;
 }
 .bottom-right {
   bottom: -1px; right: -1px;
   border-bottom-color: var(--primary-purple);
   border-right-color: var(--primary-purple);
-  border-bottom-right-radius: 12px;
+  border-bottom-right-radius: 16px;
 }
 
 .module-card:hover {
-  transform: translateY(-5px);
-  /* 悬停时增强光效 */
-  box-shadow: 0 0 30px color-mix(in srgb, var(--primary-cyan) 50%, transparent), 
-              inset 0 0 30px color-mix(in srgb, var(--primary-purple) 30%, transparent);
+  transform: translateY(-5px) scale(1.02);
+  filter: brightness(1.2);
 }
 
 /* 内部内容区 */
 .card-inner {
   height: 100%;
-  /* 直接使用全局面板背景变量 */
-  background: var(--panel-bg);
-  border-radius: 10px;
+  background: color-mix(in srgb, var(--panel-bg) 80%, transparent);
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--primary-cyan) 20%, transparent); /* 内发光线 */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 30px 20px;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+}
+
+/* --- 图标与标题横向布局 (靠拢图片排版) --- */
+.content-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 25px; /* 拉开图标和文字的距离 */
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+h2 {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: bold;
+  letter-spacing: 3px;
+  color: var(--text-main);
+  text-shadow: 0 0 15px color-mix(in srgb, var(--primary-cyan) 60%, transparent);
+}
+
+/* --- 图标与 3D 底座组 --- */
+.icon-stage {
+  position: relative;
+  width: 90px;
+  height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* 盾牌图标本身 */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  color: #fff;
+  /* 模拟图片中的六边形/盾牌背板 */
+  background: color-mix(in srgb, var(--primary-cyan) 20%, transparent);
+  border: 2px solid var(--primary-cyan);
+  border-radius: 12px; 
+  padding: 12px;
+  z-index: 3;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--primary-cyan) 50%, transparent);
+  animation: float-icon 3s ease-in-out infinite;
+}
+
+@keyframes float-icon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* 3D 底座层叠系统 */
+.holo-base {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  perspective: 200px; /* 增强3D透视 */
+}
+
+/* 底座通用属性 */
+.base-plate {
+  border-radius: 4px;
+  transform: rotateX(75deg);
+}
+
+/* 最底层的宽大暗色托盘 */
+.bottom-plate {
+  width: 100px;
+  height: 40px;
+  background: color-mix(in srgb, var(--primary-cyan) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-cyan) 50%, transparent);
+  margin-top: -20px;
+}
+
+/* 中层的亮色平台 */
+.top-plate {
+  width: 70px;
+  height: 30px;
+  background: color-mix(in srgb, var(--primary-cyan) 30%, transparent);
+  border: 2px solid var(--primary-cyan);
+  box-shadow: 0 0 20px var(--primary-cyan);
+  margin-top: -35px; /* 向上堆叠 */
+  z-index: 1;
+}
+
+/* 中心高亮光芯 */
+.base-core {
+  width: 40px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 30px 10px var(--primary-cyan);
+  transform: rotateX(75deg);
+  margin-top: -25px;
+  z-index: 2;
+  opacity: 0.8;
+}
+
+/* --- 纯色高亮按钮 (高度还原图片) --- */
+.enter-btn {
+  /* 去掉渐变，改为实心亮青色 */
+  background: var(--primary-cyan);
+  border: none;
+  border-radius: 8px; /* 图片里的按钮圆角较小 */
+  color: #fff;
+  padding: 10px 50px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  /* 按钮外围的发光投影 */
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--primary-cyan) 60%, transparent);
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+
+.enter-btn:hover {
+  background: #fff;
+  color: var(--primary-cyan);
+  box-shadow: 0 0 30px var(--primary-cyan);
+}
+</style> -->
+
+<template>
+  <div class="module-card">
+    <div class="card-inner">
+      <div class="content-top">
+        <div class="icon-stage">
+          <span class="icon" v-html="currentIcon"></span>
+          
+          <div class="holo-base">
+            <div class="base-core"></div>
+          </div>
+        </div>
+        
+        <h2>{{ title }}</h2>
+      </div>
+      
+      <button class="enter-btn">进入平台</button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+
+const props = defineProps<{ title: string }>();
+
+// 盾牌风格的 SVG，贴合机甲/科技主题
+const icons: Record<string, string> = {
+  '标注平台': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M8 11l4-4 4 4"/><path d="M12 7v8"/></svg>`,
+  '训练平台': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="12" r="3"/><path d="M12 9v-2"/><path d="M12 17v-2"/><path d="M9 12H7"/><path d="M17 12h-2"/></svg>`,
+  '模型管理': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polygon points="12 8 8 11 12 14 16 11 12 8"/></svg>`
+};
+
+const defaultIcon = icons['标注平台'];
+const currentIcon = computed(() => icons[props.title] || defaultIcon);
+</script>
+
+<style scoped>
+.module-card {
+  flex: 1;
+  position: relative;
+  /* 👇 核心：引入背景图片 👇 */
+  background-image: url('@/assets/card-bg-copy.png'); 
+  background-size: 100% 100%; /* 让图片完全拉伸贴合卡片尺寸 */
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  /* 为了防止背景图边缘锯齿，保留一定的圆角 */
+  border-radius: 16px; 
+  transition: transform 0.3s ease, filter 0.3s ease;
+  min-height: 160px; /* 保证卡片有足够的高度撑开图片 */
+
+  -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%);
+  mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%);
+
+  /* 👇 核心魔法：CSS 多边形裁切 (Clip-path) 👇 */
+  clip-path: polygon(
+    15px 0px,                 /* 1. 左上角切角起 */
+    calc(50% - 65px) 0px,     /* 2. 顶部平边，直到凹槽左边缘 */
+    calc(50% - 45px) 16px,    /* 3. 凹槽左侧向下倾斜 (深度16px) */
+    calc(50% + 45px) 16px,    /* 4. 凹槽平底 */
+    calc(50% + 65px) 0px,     /* 5. 凹槽右侧向上倾斜 */
+    calc(100% - 15px) 0px,    /* 6. 顶部平边，直到右上切角 */
+    100% 15px,                /* 7. 右上角切角 */
+    100% calc(100% - 15px),   /* 8. 右边平边往下走（恢复为15px） */
+    calc(100% - 15px) 100%,   /* 9. 正常的右下切角（不再误伤边框） */
+    15px 100%,                /* 10. 底部平边，直到左下切角 */
+    0px calc(100% - 15px),    /* 11. 左下角切角 */
+    0px 15px                  /* 12. 回到起点 */
+  );
+}
+
+.module-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  /* 悬停时整体提亮，非常有科幻感 */
+  filter: brightness(1.15) drop-shadow(0 10px 20px rgba(0, 229, 255, 0.3));
+}
+
+/* 内部内容区（由于背景图已经很丰富，这里不再需要复杂的半透明背景色） */
+.card-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* 增加内边距，防止文字和按钮压到图片自带的发光边框上 */
+  padding: 35px 25px; 
 }
 
 /* --- 图标与标题横向布局 --- */
@@ -143,17 +359,16 @@ const currentIcon = computed(() => {
 h2 {
   font-size: 1.8rem;
   margin: 0;
-  font-weight: 700;
+  font-weight: bold;
   letter-spacing: 2px;
-  /* 文字跟随主题 */
-  color: var(--text-main);
-  text-shadow: var(--glow-cyan);
+  color: #ffffff; /* 在深色图上用纯白文字最清晰 */
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
 }
 
-/* --- 图标与全息底座 --- */
+/* --- 图标容器 --- */
 .icon-stage {
   position: relative;
-  width: 80px;
+  width: 70px;
   height: 90px;
   display: flex;
   flex-direction: column;
@@ -165,67 +380,62 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
-  color: var(--primary-cyan); /* 让图标保持青色高亮，比文字更突出 */
-  background: color-mix(in srgb, var(--primary-cyan) 10%, transparent);
-  border: 1.5px solid color-mix(in srgb, var(--primary-cyan) 80%, transparent);
-  border-radius: 12px;
+  width: 55px;
+  height: 55px;
+  color: #fff;
+  background: rgba(0, 229, 255, 0.15);
+  border: 1.5px solid #00e5ff;
+  border-radius: 12px; 
   padding: 10px;
-  z-index: 2;
-  box-shadow: var(--glow-cyan);
-  animation: float 3s ease-in-out infinite;
+  z-index: 3;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.5), inset 0 0 10px rgba(0, 229, 255, 0.3);
+  animation: float-icon 3s ease-in-out infinite;
 }
 
-@keyframes float {
+@keyframes float-icon {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
 
-/* 全息 3D 底座 */
+/* 极简底座（因为背景图已经很有深度了，底座越简单越高级） */
 .holo-base {
   position: absolute;
   bottom: 0;
   width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  perspective: 150px;
+  justify-content: center;
+  perspective: 200px;
 }
 
-.base-layer {
-  width: 70px;
-  height: 25px;
-  background: color-mix(in srgb, var(--primary-cyan) 20%, transparent);
-  border: 1.5px solid var(--primary-cyan);
-  transform: rotateX(75deg);
-  box-shadow: var(--glow-cyan);
-  margin-top: -15px;
-}
-.base-layer.small {
+.base-core {
   width: 50px;
-  height: 20px;
-  background: color-mix(in srgb, var(--primary-cyan) 40%, transparent);
-  box-shadow: 0 0 20px var(--primary-cyan);
+  height: 15px;
+  background: rgba(0, 229, 255, 0.3);
+  border: 1px solid #00e5ff;
+  border-radius: 50%;
+  box-shadow: 0 0 20px #00e5ff;
+  transform: rotateX(75deg);
+  margin-top: -10px;
 }
 
-/* --- 底部按钮 --- */
+/* --- 按钮 --- */
 .enter-btn {
-  /* 按钮渐变融合两种主题色 */
-  background: linear-gradient(90deg, var(--primary-cyan) 0%, var(--primary-purple) 100%);
+  /* 使用纯正的青色渐变，呼应图片的边框颜色 */
+  background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
   border: none;
   border-radius: 20px;
-  color: #ffffff; /* 按钮文字通常保持纯白以保证对比度 */
-  padding: 8px 35px;
+  color: #fff;
+  padding: 10px 45px;
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: bold;
   cursor: pointer;
-  box-shadow: var(--glow-cyan);
+  box-shadow: 0 4px 15px rgba(0, 229, 255, 0.4);
   transition: all 0.3s;
 }
 
 .enter-btn:hover {
-  box-shadow: var(--glow-purple); /* 悬停时切换光效颜色增加动感 */
+  background: linear-gradient(90deg, #3a7bd5 0%, #00d2ff 100%);
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.8);
   filter: brightness(1.1);
 }
 </style>

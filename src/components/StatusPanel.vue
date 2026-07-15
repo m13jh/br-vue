@@ -1,7 +1,7 @@
 <template>
   <section class="data-panels">
     <div class="data-card">
-      <h3>| 服务运行状态</h3>
+      <h3>服务运行状态</h3>
       <div class="data-content">
         <div class="data-item">
           <span>服务在线率</span>
@@ -15,7 +15,7 @@
     </div>
 
     <div class="data-card">
-      <h3>| 硬件资源</h3>
+      <h3>硬件资源</h3>
       <div class="data-content">
         <div class="data-item">
           <strong class="highlight">96.50%</strong>
@@ -29,7 +29,7 @@
     </div>
 
     <div class="data-card">
-      <h3>| 活跃项目</h3>
+      <h3>活跃项目</h3>
       <div class="data-content">
         <div class="data-item">
           <strong class="highlight">18</strong><span>项目</span>
@@ -42,7 +42,7 @@
     </div>
 
     <div class="data-card">
-      <h3>| 业务运营</h3>
+      <h3>业务运营</h3>
       <div class="data-content">
         <div class="data-item">
           <span>推理调用</span>
@@ -70,39 +70,45 @@
 
 .data-card {
   flex: 1;
-  background: var(--panel-bg);
-  /* 使用变量和 color-mix 替换 rgba */
-  border: 1px solid color-mix(in srgb, var(--primary-cyan) 30%, transparent);
-  box-shadow: inset 0 0 20px color-mix(in srgb, var(--primary-cyan) 15%, transparent);
-  border-radius: 12px;
-  padding: 20px;
+  position: relative;
   display: flex;
   flex-direction: column;
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
+  min-height: 160px; /* 给一个最小高度，撑开背景图 */
+  
+  /* 👇 引入全新的科幻背景图 👇 */
+  background-image: url('@/assets/panel-bg.png'); 
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  /* 调整内边距：把文字往中间挤一点，避免压到背景图自带的发光边框 */
+  padding: 25px 25px 20px 25px; 
+  transition: transform 0.3s ease, filter 0.3s ease;
+  
+  /* 👇 核心魔法：和上方入口卡片完全一致的多边形物理切角 👇 */
+  clip-path: polygon(
+    6px 0px,                  /* 1. 左上角切角变小 (15px -> 6px) */
+    calc(50% - 70px) 0px,     /* 2. 顶部平边 */
+    calc(50% - 50px) 12px,    /* 3. 凹槽变浅 (16px -> 12px) */
+    calc(50% + 50px) 12px,    /* 4. 凹槽平底 */
+    calc(50% + 70px) 0px,     /* 5. 凹槽右侧 */
+    calc(100% - 6px) 0px,     /* 6. 顶部平边 */
+    100% 6px,                 /* 7. 右上角切角 */
+    100% calc(100% - 6px),    /* 8. 右边平边往下 */
+    calc(100% - 6px) 100%,    /* 9. 右下切角 */
+    6px 100%,                 /* 10. 底部平边 */
+    0px calc(100% - 6px),     /* 11. 左下角切角 */
+    0px 6px                   /* 12. 回到起点 */
+  );
 }
 
-.data-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 30px; height: 30px;
-  border-top: 2px solid var(--primary-cyan);
-  border-left: 2px solid var(--primary-cyan);
-  border-top-left-radius: 12px;
-}
-.data-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0; right: 0;
-  width: 30px; height: 30px;
-  border-bottom: 2px solid var(--primary-cyan);
-  border-right: 2px solid var(--primary-cyan);
-  border-bottom-right-radius: 12px;
+/* 悬停时的呼吸发光感 */
+.data-card:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.15);
 }
 
+/* 标题样式保留，左侧的竖线装饰很好看 */
 .data-card h3 {
   font-size: 1rem;
   margin: 0 0 20px 0;
@@ -126,7 +132,6 @@
 
 .data-item span {
   font-size: 0.85rem;
-  /* 副标题/单位使用混入背景色的弱化文字 */
   color: color-mix(in srgb, var(--text-main) 70%, transparent);
   margin-bottom: 8px;
   transition: color 0.3s ease;

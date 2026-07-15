@@ -110,7 +110,7 @@ const initThreeJS = () => {
     opacity: 0.8,
   });
   sphereRight = new THREE.Points(geometry, materialRight);
-  sphereRight.position.set(4, 0, -3);
+  sphereRight.position.set(8, 2, -3);
   scene.add(sphereRight);
 
   // 背景散落星点
@@ -235,8 +235,22 @@ onBeforeUnmount(() => {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  color: #fff;
+  color: var(--text-main);
   font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  
+  /* 👇 新增：设置背景图片 👇 */
+  background-image: url('@/assets/bg-dark-copy.png'); /* 注意路径是否匹配你的项目结构 */
+  background-size: cover;       /* 让图片按比例缩放并完全覆盖整个屏幕 */
+  background-position: center;  /* 确保图片居中 */
+  background-repeat: no-repeat; /* 防止图片重复平铺 */
+  background-color: var(--bg-dark); /* 作为图片加载前的底色 */
+  transition: background-image 0.3s ease;
+}
+
+/* 👇 新增：处理浅色模式兼容 👇 */
+/* 当全局 html 被设置 data-theme="light" 时，取消这个深色背景图 */
+:global([data-theme="light"]) .dashboard-wrapper {
+  background-image: none; /* 浅色模式下移除图片，退回到你的纯色/浅色渐变背景 */
 }
 .canvas-container {
   position: absolute;
@@ -255,8 +269,9 @@ onBeforeUnmount(() => {
   z-index: 10;
   display: flex;
   flex-direction: column;
-  padding: 2% 5%;
+  justify-content: center; /* 让所有内容垂直居中，留出上下呼吸空间 */
   pointer-events: none;
+  padding: 8vh 10% 0 10%;
 }
 .ui-layer > * {
   pointer-events: auto;
@@ -266,7 +281,7 @@ onBeforeUnmount(() => {
   justify-content: space-between;
   gap: 20px;
   margin-bottom: 20px;
-  flex: 1;
+  /* flex: 1; */
 }
 /* =========================================
    中上部科技装饰线 
