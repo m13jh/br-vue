@@ -417,12 +417,15 @@ body, html {
 </script>
 
 <style>
-/* 定义科技风主题色变量，全局可用 */
+/* 替换 App.vue 中的 :root 变量 */
 :root {
   --primary-cyan: #00e5ff;
   --primary-purple: #b062ff;
-  --bg-glass: rgba(13, 27, 62, 0.4);
-  --border-glass: rgba(0, 229, 255, 0.3);
+  --bg-dark: #050b14;
+  --panel-bg: rgba(12, 26, 56, 0.7);
+  --border-cyan: rgba(0, 229, 255, 0.5);
+  --glow-cyan: 0 0 15px rgba(0, 229, 255, 0.4);
+  --glow-purple: 0 0 20px rgba(176, 98, 255, 0.3);
 }
 
 /* ====== 全局样式清理 ====== */
@@ -433,8 +436,11 @@ body, html {
   height: 100%;
   overflow: hidden;
   box-sizing: border-box;
-  background-color: #050d21; 
+  
+  /* 👇 核心修改：设置从左到右的渐变背景 (浅蓝 -> 浅黑) */
+  background: linear-gradient(90deg, #2b4c7e 0%, #262626 100%);
 }
+
 *, *::before, *::after {
   box-sizing: inherit;
 }

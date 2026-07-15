@@ -64,46 +64,83 @@
 .data-panels {
   display: flex;
   justify-content: space-between;
-  gap: 15px;
-  margin-bottom: 30px;
+  gap: 20px;
+  margin-bottom: 25px;
 }
+
 .data-card {
   flex: 1;
-  background: rgba(13, 27, 62, 0.6);
-  border: 1px solid rgba(0, 229, 255, 0.3);
-  border-radius: 8px;
-  padding: 15px;
+  background: var(--panel-bg);
+  /* 增强青色边框与内发光 */
+  border: 1px solid var(--border-cyan);
+  box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.15);
+  border-radius: 12px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
+
+/* 模拟科技边框的角标发光 */
+.data-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 30px; height: 30px;
+  border-top: 2px solid var(--primary-cyan);
+  border-left: 2px solid var(--primary-cyan);
+  border-top-left-radius: 12px;
+}
+.data-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 30px; height: 30px;
+  border-bottom: 2px solid var(--primary-cyan);
+  border-right: 2px solid var(--primary-cyan);
+  border-bottom-right-radius: 12px;
+}
+
 .data-card h3 {
   font-size: 1rem;
-  margin: 0 0 15px 0;
-  color: #00e5ff;
-  border-left: 3px solid #00e5ff;
-  padding-left: 8px;
+  margin: 0 0 20px 0;
+  color: #fff;
+  border-left: 4px solid var(--primary-cyan);
+  padding-left: 10px;
+  text-shadow: 0 0 5px var(--primary-cyan);
 }
+
 .data-content {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
 }
+
 .data-item {
   display: flex;
   flex-direction: column;
 }
+
 .data-item span {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: #a0b6d4;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
+
 .data-item strong {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  color: #fff;
 }
+
+/* 重点数据高亮纯青色 */
 .highlight {
-  color: #00e5ff;
-  font-size: 1.5rem !important;
+  color: var(--primary-cyan) !important;
+  font-size: 1.8rem !important;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
 }
+
 .chart-placeholder {
   height: 40px;
   border-bottom: 1px dashed rgba(0,229,255,0.3);
@@ -111,5 +148,6 @@
   text-align: center;
   line-height: 40px;
   font-size: 0.8rem;
+  margin-top: auto;
 }
 </style>

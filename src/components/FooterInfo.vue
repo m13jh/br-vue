@@ -14,21 +14,27 @@
 .status-footer {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 30px;
   margin-top: auto;
+  padding-bottom: 10px;
 }
+
 .status-badge {
-  background: rgba(0, 229, 255, 0.1);
-  border: 1px solid rgba(0, 229, 255, 0.4);
-  padding: 8px 20px;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  background: rgba(12, 26, 56, 0.8);
+  border: 1px solid var(--border-cyan);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+  padding: 10px 25px;
+  border-radius: 8px; /* 取消倾斜，改为普通圆角 */
+  font-size: 0.95rem;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transform: skewX(-15deg);
+  gap: 10px;
+  color: #e0eaff;
 }
-.status-badge > * {
-  transform: skewX(15deg);
+
+.status-badge .icon {
+  font-size: 1.2rem;
+  /* 如果有对应的 SVG 图标可以直接替换这些 emoji */
 }
 </style>
