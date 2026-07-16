@@ -19,26 +19,25 @@
       <div class="data-content">
         <div class="data-item">
           <strong class="highlight">96.50%</strong>
-          <span>注</span>
         </div>
         <div class="data-item">
           <strong>1650条</strong>
         </div>
       </div>
-      <div class="chart-placeholder">（折线图占位）</div>
+      <div ref="hardwareChartRef" class="mini-chart"></div>
     </div>
 
     <div class="data-card">
       <h3>活跃项目</h3>
       <div class="data-content">
         <div class="data-item">
-          <strong class="highlight">18</strong><span>项目</span>
+          <strong class="highlight">18项目</strong>
         </div>
         <div class="data-item">
-          <strong>18</strong><span>个</span>
+          <strong>18个</strong>
         </div>
       </div>
-      <div class="chart-placeholder">（折线图占位）</div>
+      <div ref="projectChartRef" class="mini-chart"></div>
     </div>
 
     <div class="data-card">
@@ -58,6 +57,92 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import * as echarts from 'echarts';
+
+// 获取 DOM 引用
+const hardwareChartRef = ref<HTMLElement | null>(null);
+const projectChartRef = ref<HTMLElement | null>(null);
+
+// 图表实例
+let hardwareChart: echarts.ECharts | null = null;
+let projectChart: echarts.ECharts | null = null;
+
+// 通用的迷你折线图配置工厂函数 (科幻极简风)
+const getMiniChartOption = (data: number[]) => {
+  return {
+    grid: {
+      left: 0,
+      right: 0,
+      top: 5,
+      bottom: 0
+    },
+    xAxis: {
+      type: 'category',
+      show: false, // 隐藏X轴
+      boundaryGap: false
+    },
+    yAxis: {
+      type: 'value',
+      show: false, // 隐藏Y轴
+      min: 'dataMin' // 自动适应最小值，让折线波动更明显
+    },
+    series: [
+      {
+        data: data,
+        type: 'line',
+        smooth: true, // 平滑曲线
+        showSymbol: false, // 隐藏数据点，悬浮时才显示
+        lineStyle: {
+          color: '#00ffff', // 青色线条，对应 var(--primary-cyan)
+          width: 2,
+          shadowColor: 'rgba(0, 255, 255, 0.5)',
+          shadowBlur: 5
+        },
+        areaStyle: {
+          // 渐变填充，增加科幻发光感
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(0, 255, 255, 0.4)' },
+            { offset: 1, color: 'rgba(0, 255, 255, 0)' }
+          ])
+        }
+      }
+    ]
+  };
+};
+
+const initCharts = () => {
+  // 初始化硬件资源图表
+  if (hardwareChartRef.value) {
+    hardwareChart = echarts.init(hardwareChartRef.value);
+    // 模拟数据
+    hardwareChart.setOption(getMiniChartOption([70, 85, 82, 90, 88, 93, 96.5]));
+  }
+
+  // 初始化活跃项目图表
+  if (projectChartRef.value) {
+    projectChart = echarts.init(projectChartRef.value);
+    // 模拟数据
+    projectChart.setOption(getMiniChartOption([10, 12, 14, 13, 16, 17, 18]));
+  }
+};
+
+// 监听窗口大小改变，实现图表自适应
+const handleResize = () => {
+  hardwareChart?.resize();
+  projectChart?.resize();
+};
+
+onMounted(() => {
+  initCharts();
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+  hardwareChart?.dispose();
+  projectChart?.dispose();
+});
 </script>
 
 <style scoped>
@@ -150,13 +235,10 @@
   text-shadow: 0 0 10px color-mix(in srgb, var(--primary-cyan) 50%, transparent);
 }
 
-.chart-placeholder {
-  height: 40px;
-  border-bottom: 1px dashed color-mix(in srgb, var(--primary-cyan) 30%, transparent);
-  color: color-mix(in srgb, var(--text-main) 30%, transparent);
-  text-align: center;
-  line-height: 40px;
-  font-size: 0.8rem;
-  margin-top: auto;
+/* 替换为真实图表的容器样式 */
+.mini-chart {
+  height: 45px;
+  width: 100%;
+  margin-top: auto; /* 自动推到底部 */
 }
 </style>

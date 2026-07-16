@@ -5,7 +5,7 @@
       <p class="subtitle">面向工业制造的数据标注 · 模型训练 · 智能决策平台</p>
     </div>
     
-    <button class="theme-toggle" @click="toggleTheme">
+    <button class="theme-toggle" @click="toggleTheme" v-show="false">
       {{ isDark ? '🌙 深色模式' : '🌞 浅色模式' }}
     </button>
   </header>

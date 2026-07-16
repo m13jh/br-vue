@@ -32,34 +32,45 @@
 }
 
 .status-badge {
-  /* 使用全局面板背景变量 */
-  background: var(--panel-bg);
-  /* 使用 color-mix 为边框和阴影增加透明度 */
-  border: 1px solid color-mix(in srgb, var(--primary-cyan) 40%, transparent);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--primary-cyan) 20%, transparent);
-  padding: 8px 25px;
-  border-radius: 8px;
+  /* 👇 引入切图作为背景 👇 */
+  background-image: url('@/assets/footer-bg.png'); 
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent;
+
+  /* 清除旧的纯 CSS 边框、阴影和背景 */
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  backdrop-filter: none;
+
+  /* 稍微加大一点内边距，防止文字压到图片自带的发光边缘 */
+  padding: 12px 35px;
   font-size: 0.95rem;
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 10px;
-  /* 文字颜色跟随主题 */
   color: var(--text-main);
-  backdrop-filter: blur(5px);
   transition: all 0.3s ease;
+}
+
+.status-badge:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
 }
 
 /* 数据库连接成功的特殊高亮 */
 .status-badge.success {
-  border-color: color-mix(in srgb, var(--primary-cyan) 70%, transparent);
-  box-shadow: 0 0 15px color-mix(in srgb, var(--primary-cyan) 30%, transparent);
+  /* 既然背景换成了图片，我们用 filter 让这张图整体发光提亮来表示 Success 状态 */
+  filter: brightness(1.2) drop-shadow(0 0 10px color-mix(in srgb, var(--primary-cyan) 50%, transparent));
 }
 
 .status-badge .icon {
   width: 18px;
   height: 18px;
-  color: var(--primary-cyan); /* 图标保持主题高亮色 */
+  color: var(--primary-cyan);
   filter: drop-shadow(0 0 5px color-mix(in srgb, var(--primary-cyan) 50%, transparent));
 }
 </style>
