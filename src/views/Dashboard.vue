@@ -46,6 +46,7 @@ import FooterInfo from '@/components/FooterInfo.vue';
 const canvasContainer = ref<HTMLElement | null>(null);
 let scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer;
 let animationId: number;
+let resizeObserver: ResizeObserver | null = null; // 用于监听容器尺寸变化
 
 // 模型与粒子变量
 let sphereLeft: THREE.Points, sphereRight: THREE.Points;
@@ -82,17 +83,21 @@ const updateThreeColors = () => {
 
 // 初始化Three.js场景
 const initThreeJS = () => {
+  if (!canvasContainer.value) return;
+
+  // 获取容器实际宽高，而不是 window 的宽高
+  const width = canvasContainer.value.clientWidth;
+  const height = canvasContainer.value.clientHeight;
+
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
   camera.position.z = 5;
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(width, height);
   renderer.setPixelRatio(window.devicePixelRatio);
   
-  if (canvasContainer.value) {
-    canvasContainer.value.appendChild(renderer.domElement);
-  }
+  canvasContainer.value.appendChild(renderer.domElement);
 
   // 获取初始主题颜色
   const styles = window.getComputedStyle(document.documentElement);
@@ -165,8 +170,11 @@ const initThreeJS = () => {
   waveParticles.position.z = -2;
   scene.add(waveParticles);
 
-  // 监听窗口大小变化
-  window.addEventListener('resize', onWindowResize);
+  // 使用 ResizeObserver 监听容器大小变化
+  resizeObserver = new ResizeObserver(() => {
+    onWindowResize();
+  });
+  resizeObserver.observe(canvasContainer.value);
 };
 
 // 动画渲染循环
@@ -206,9 +214,15 @@ const animate = () => {
 
 // 处理窗口自适应
 const onWindowResize = () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+  if (!canvasContainer.value || !camera || !renderer) return;
+  
+  // 重新获取容器实际宽高
+  const width = canvasContainer.value.clientWidth;
+  const height = canvasContainer.value.clientHeight;
+
+  camera.aspect = width / height;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(width, height);
 };
 
 // 组件挂载时执行
@@ -234,9 +248,14 @@ onMounted(() => {
 
 // 组件卸载前清理资源
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', onWindowResize);
   cancelAnimationFrame(animationId);
   if (renderer) renderer.dispose();
+
+  // 清理容器尺寸监听器
+  if (resizeObserver && canvasContainer.value) {
+    resizeObserver.unobserve(canvasContainer.value);
+    resizeObserver.disconnect();
+  }
 
   // 断开主题监听器
   if (themeObserver) {
@@ -249,15 +268,15 @@ onBeforeUnmount(() => {
 /* 页面主容器样式 */
 .dashboard-wrapper {
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;         /* 宽度设为100%适应父容器，避免出现横向滚动条 */
+  height: 100vh;       /* 改回100vh，防止高度塌陷变成白屏 */
   overflow: hidden;
   color: var(--text-main);
   font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
   
   /* 深色主题背景配置 */
   background-image: url('@/assets/bg-dark.png'); 
-  background-size: cover;      
+  background-size: 100% 100%;   /* 核心修改：强制拉伸图片铺满屏幕，窗口拖动时背景也会跟着缩放 */
   background-position: center;  
   background-repeat: no-repeat; 
   background-color: var(--bg-dark); 
