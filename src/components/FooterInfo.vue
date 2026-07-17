@@ -1,5 +1,5 @@
 <template>
-  <footer class="status-footer">
+  <footer class="status-footer">    
     <div class="status-badge">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
       CPU 72%
@@ -16,13 +16,16 @@
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       数据库 已连接
     </div>
+    
   </footer>
 </template>
 
 <script setup lang="ts">
+// 暂无附加逻辑
 </script>
 
 <style scoped>
+/* 底部布局对齐 */
 .status-footer {
   display: flex;
   justify-content: center;
@@ -31,21 +34,21 @@
   padding-bottom: 20vh;
 }
 
+/* 状态徽章基础样式 */
 .status-badge {
-  /* 👇 引入切图作为背景 👇 */
   background-image: url('@/assets/footer-bg.png'); 
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
   background-color: transparent;
 
-  /* 清除旧的纯 CSS 边框、阴影和背景 */
+  /* 清除旧的边框与阴影样式 */
   border: none;
   box-shadow: none;
   border-radius: 0;
   backdrop-filter: none;
 
-  /* 稍微加大一点内边距，防止文字压到图片自带的发光边缘 */
+  /* 调整内边距防止文字压到背景发光边缘 */
   padding: 12px 35px;
   font-size: 0.95rem;
   font-weight: 500;
@@ -56,6 +59,7 @@
   transition: all 0.3s ease;
 }
 
+/* 徽章悬停效果 */
 .status-badge:hover {
   transform: translateY(-2px);
   filter: brightness(1.15);
@@ -63,10 +67,10 @@
 
 /* 数据库连接成功的特殊高亮 */
 .status-badge.success {
-  /* 既然背景换成了图片，我们用 filter 让这张图整体发光提亮来表示 Success 状态 */
   filter: brightness(1.2) drop-shadow(0 0 10px color-mix(in srgb, var(--primary-cyan) 50%, transparent));
 }
 
+/* 图标样式设置 */
 .status-badge .icon {
   width: 18px;
   height: 18px;

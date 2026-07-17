@@ -1,262 +1,3 @@
-<!-- <template>
-  <div class="module-card">
-    <div class="tech-corner top-left"></div>
-    <div class="tech-corner top-right"></div>
-    <div class="tech-corner bottom-left"></div>
-    <div class="tech-corner bottom-right"></div>
-
-    <div class="card-inner">
-      <div class="content-top">
-        <div class="icon-stage">
-          <span class="icon" v-html="currentIcon"></span>
-          
-          <div class="holo-base">
-            <div class="base-plate bottom-plate"></div>
-            <div class="base-plate top-plate"></div>
-            <div class="base-core"></div>
-          </div>
-        </div>
-        
-        <h2>{{ title }}</h2>
-      </div>
-      
-      <button class="enter-btn">进入平台</button>
-    </div>
-  </div>
-</template>
-
-<script setup lang="ts">
-import { computed } from 'vue';
-
-const props = defineProps<{ title: string }>();
-
-// 盾牌风格的 SVG（更接近你截图中的图标）
-const icons: Record<string, string> = {
-  '标注平台': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M8 11l4-4 4 4"/><path d="M12 7v8"/></svg>`,
-  '训练平台': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="12" r="3"/><path d="M12 9v-2"/><path d="M12 17v-2"/><path d="M9 12H7"/><path d="M17 12h-2"/></svg>`,
-  '模型管理': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polygon points="12 8 8 11 12 14 16 11 12 8"/></svg>`
-};
-
-const defaultIcon = icons['标注平台'];
-const currentIcon = computed(() => icons[props.title] || defaultIcon);
-</script>
-
-<style scoped>
-.module-card {
-  flex: 1;
-  position: relative;
-  border-radius: 16px;
-  /* 模拟图片边缘的发光和底部的幽暗紫色 */
-  background: linear-gradient(180deg, 
-    color-mix(in srgb, var(--primary-cyan) 10%, transparent) 0%, 
-    color-mix(in srgb, var(--primary-purple) 25%, transparent) 100%
-  );
-  box-shadow: 0 0 20px color-mix(in srgb, var(--primary-cyan) 15%, transparent), 
-              inset 0 0 40px color-mix(in srgb, var(--primary-purple) 20%, transparent);
-  transition: transform 0.3s ease, filter 0.3s ease;
-  padding: 3px; /* 留出双线边框空间 */
-}
-
-/* 外层细边框 */
-.module-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-  padding: 1px;
-  background: linear-gradient(135deg, 
-    var(--primary-cyan) 0%, 
-    transparent 30%, 
-    transparent 70%, 
-    var(--primary-purple) 100%
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* --- 加厚的折角包边 (还原图片四角细节) --- */
-.tech-corner {
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  border: 3px solid transparent;
-  pointer-events: none;
-  z-index: 2;
-}
-.top-left {
-  top: -1px; left: -1px;
-  border-top-color: var(--primary-cyan);
-  border-left-color: var(--primary-cyan);
-  border-top-left-radius: 16px;
-}
-.top-right {
-  top: -1px; right: -1px;
-  border-top-color: var(--primary-cyan);
-  border-right-color: var(--primary-cyan);
-  border-top-right-radius: 16px;
-}
-.bottom-left {
-  bottom: -1px; left: -1px;
-  border-bottom-color: var(--primary-purple);
-  border-left-color: var(--primary-purple);
-  border-bottom-left-radius: 16px;
-}
-.bottom-right {
-  bottom: -1px; right: -1px;
-  border-bottom-color: var(--primary-purple);
-  border-right-color: var(--primary-purple);
-  border-bottom-right-radius: 16px;
-}
-
-.module-card:hover {
-  transform: translateY(-5px) scale(1.02);
-  filter: brightness(1.2);
-}
-
-/* 内部内容区 */
-.card-inner {
-  height: 100%;
-  background: color-mix(in srgb, var(--panel-bg) 80%, transparent);
-  border-radius: 14px;
-  border: 1px solid color-mix(in srgb, var(--primary-cyan) 20%, transparent); /* 内发光线 */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 30px 20px;
-  backdrop-filter: blur(10px);
-}
-
-/* --- 图标与标题横向布局 (靠拢图片排版) --- */
-.content-top {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 25px; /* 拉开图标和文字的距离 */
-  margin-bottom: 30px;
-  width: 100%;
-}
-
-h2 {
-  font-size: 2rem;
-  margin: 0;
-  font-weight: bold;
-  letter-spacing: 3px;
-  color: var(--text-main);
-  text-shadow: 0 0 15px color-mix(in srgb, var(--primary-cyan) 60%, transparent);
-}
-
-/* --- 图标与 3D 底座组 --- */
-.icon-stage {
-  position: relative;
-  width: 90px;
-  height: 110px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-/* 盾牌图标本身 */
-.icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  color: #fff;
-  /* 模拟图片中的六边形/盾牌背板 */
-  background: color-mix(in srgb, var(--primary-cyan) 20%, transparent);
-  border: 2px solid var(--primary-cyan);
-  border-radius: 12px; 
-  padding: 12px;
-  z-index: 3;
-  box-shadow: 0 0 20px color-mix(in srgb, var(--primary-cyan) 50%, transparent);
-  animation: float-icon 3s ease-in-out infinite;
-}
-
-@keyframes float-icon {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* 3D 底座层叠系统 */
-.holo-base {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  perspective: 200px; /* 增强3D透视 */
-}
-
-/* 底座通用属性 */
-.base-plate {
-  border-radius: 4px;
-  transform: rotateX(75deg);
-}
-
-/* 最底层的宽大暗色托盘 */
-.bottom-plate {
-  width: 100px;
-  height: 40px;
-  background: color-mix(in srgb, var(--primary-cyan) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--primary-cyan) 50%, transparent);
-  margin-top: -20px;
-}
-
-/* 中层的亮色平台 */
-.top-plate {
-  width: 70px;
-  height: 30px;
-  background: color-mix(in srgb, var(--primary-cyan) 30%, transparent);
-  border: 2px solid var(--primary-cyan);
-  box-shadow: 0 0 20px var(--primary-cyan);
-  margin-top: -35px; /* 向上堆叠 */
-  z-index: 1;
-}
-
-/* 中心高亮光芯 */
-.base-core {
-  width: 40px;
-  height: 10px;
-  background: #fff;
-  border-radius: 50%;
-  box-shadow: 0 0 30px 10px var(--primary-cyan);
-  transform: rotateX(75deg);
-  margin-top: -25px;
-  z-index: 2;
-  opacity: 0.8;
-}
-
-/* --- 纯色高亮按钮 (高度还原图片) --- */
-.enter-btn {
-  /* 去掉渐变，改为实心亮青色 */
-  background: var(--primary-cyan);
-  border: none;
-  border-radius: 8px; /* 图片里的按钮圆角较小 */
-  color: #fff;
-  padding: 10px 50px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  /* 按钮外围的发光投影 */
-  box-shadow: 0 4px 20px color-mix(in srgb, var(--primary-cyan) 60%, transparent);
-  transition: all 0.2s;
-  letter-spacing: 1px;
-}
-
-.enter-btn:hover {
-  background: #fff;
-  color: var(--primary-cyan);
-  box-shadow: 0 0 30px var(--primary-cyan);
-}
-</style> -->
-
 <template>
   <div class="module-card">
     <div class="card-inner">
@@ -282,7 +23,7 @@ import { computed } from 'vue';
 
 const props = defineProps<{ title: string }>();
 
-// 盾牌风格的 SVG，贴合机甲/科技主题
+// 盾牌风格的 SVG
 const icons: Record<string, string> = {
   '标注平台': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M8 11l4-4 4 4"/><path d="M12 7v8"/></svg>`,
   '训练平台': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="12" r="3"/><path d="M12 9v-2"/><path d="M12 17v-2"/><path d="M9 12H7"/><path d="M17 12h-2"/></svg>`,
@@ -297,8 +38,8 @@ const currentIcon = computed(() => icons[props.title] || defaultIcon);
 .module-card {
   flex: 1;
   position: relative;
-  /* 👇 核心：引入背景图片 👇 */
-  background-image: url('@/assets/card-bg-copy.png'); 
+
+  background-image: url('@/assets/card-bg.png'); 
   background-size: 100% 100%; /* 让图片完全拉伸贴合卡片尺寸 */
   background-position: center;
   background-repeat: no-repeat;
@@ -311,7 +52,7 @@ const currentIcon = computed(() => icons[props.title] || defaultIcon);
   -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%);
   mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%);
 
-  /* 👇 核心魔法：CSS 多边形裁切 (Clip-path) 👇 */
+  /* CSS 多边形裁切 */
   clip-path: polygon(
     15px 0px,                 /* 1. 左上角切角起 */
     calc(50% - 65px) 0px,     /* 2. 顶部平边，直到凹槽左边缘 */
@@ -330,7 +71,7 @@ const currentIcon = computed(() => icons[props.title] || defaultIcon);
 
 .module-card:hover {
   transform: translateY(-5px) scale(1.02);
-  /* 悬停时整体提亮，非常有科幻感 */
+  /* 悬停时整体提亮 */
   filter: brightness(1.15) drop-shadow(0 10px 20px rgba(0, 229, 255, 0.3));
 }
 
@@ -374,6 +115,7 @@ h2 {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  transform: translateY(12px);
 }
 
 .icon {
@@ -390,6 +132,7 @@ h2 {
   z-index: 3;
   box-shadow: 0 0 15px rgba(0, 229, 255, 0.5), inset 0 0 10px rgba(0, 229, 255, 0.3);
   animation: float-icon 3s ease-in-out infinite;
+  margin-top: 12px;
 }
 
 @keyframes float-icon {
@@ -397,7 +140,7 @@ h2 {
   50% { transform: translateY(-8px); }
 }
 
-/* 极简底座（因为背景图已经很有深度了，底座越简单越高级） */
+/* 底座 */
 .holo-base {
   position: absolute;
   bottom: 0;

@@ -1,10 +1,14 @@
 <template>
+  <!-- 页面主容器 -->
   <div class="dashboard-wrapper">
+    <!-- 3D渲染画布容器 -->
     <div ref="canvasContainer" class="canvas-container"></div>
 
+    <!-- 上层UI界面 -->
     <div class="ui-layer">
       <TopBar />
 
+      <!-- 中部科技感装饰线 -->
       <div class="tech-divider">
         <div class="line-glow left"></div>
         <div class="center-node">
@@ -14,6 +18,7 @@
         <div class="line-glow right"></div>
       </div>
 
+      <!-- 核心功能入口模块 -->
       <section class="main-modules">
         <EntryCard title="标注平台" />
         <EntryCard title="训练平台" />
@@ -31,37 +36,41 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import * as THREE from 'three';
 
-// 导入组件
+// 引入子组件
 import TopBar from '@/components/TopBar.vue';
 import EntryCard from '@/components/EntryCard.vue';
 import StatusPanel from '@/components/StatusPanel.vue';
 import FooterInfo from '@/components/FooterInfo.vue';
 
+// 基础变量定义
 const canvasContainer = ref<HTMLElement | null>(null);
 let scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer;
 let animationId: number;
+
+// 模型与粒子变量
 let sphereLeft: THREE.Points, sphereRight: THREE.Points;
 let waveParticles: THREE.Points;
 let waveCount = 0;
 
+// 波浪网格参数
 const AMOUNTX = 60;
 const AMOUNTZ = 15;
 const SEPARATION = 0.4;
 
-// 1. 【新增】将需要变色的材质提升为作用域变量
+// 材质与主题监听变量
 let materialLeft: THREE.PointsMaterial;
 let materialRight: THREE.PointsMaterial;
 let waveMaterial: THREE.PointsMaterial;
-let themeObserver: MutationObserver | null = null; // 监听器实例
+let themeObserver: MutationObserver | null = null; 
 
-// 2. 【新增】动态更新 Three.js 颜色的函数
+// 动态更新Three.js材质颜色
 const updateThreeColors = () => {
-  // 获取当前 HTML 根节点上生效的 CSS 变量值
+  // 获取当前CSS主题变量
   const styles = window.getComputedStyle(document.documentElement);
   const cyanColor = styles.getPropertyValue('--primary-cyan').trim();
   const purpleColor = styles.getPropertyValue('--primary-purple').trim();
 
-  // 如果成功获取到变量，则更新 Three.js 材质颜色
+  // 更新对应材质颜色
   if (cyanColor && waveMaterial && materialLeft) {
     waveMaterial.color.set(cyanColor);
     materialLeft.color.set(cyanColor);
@@ -71,6 +80,7 @@ const updateThreeColors = () => {
   }
 };
 
+// 初始化Three.js场景
 const initThreeJS = () => {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -84,14 +94,14 @@ const initThreeJS = () => {
     canvasContainer.value.appendChild(renderer.domElement);
   }
 
-  // 3. 【修改】初始化材质时，直接先调用一次读取 CSS 变量，或者给个默认值
+  // 获取初始主题颜色
   const styles = window.getComputedStyle(document.documentElement);
   const initialCyan = styles.getPropertyValue('--primary-cyan').trim() || '#00e5ff';
   const initialPurple = styles.getPropertyValue('--primary-purple').trim() || '#b062ff';
 
-  const geometry = new THREE.SphereGeometry(1.2, 32, 32);
+  const geometry = new THREE.SphereGeometry(1.2, 48, 48);
   
-  // 左球材质
+  // 创建左侧青色球体
   materialLeft = new THREE.PointsMaterial({
     color: new THREE.Color(initialCyan),
     size: 0.02,
@@ -99,10 +109,10 @@ const initThreeJS = () => {
     opacity: 0.8,
   });
   sphereLeft = new THREE.Points(geometry, materialLeft);
-  sphereLeft.position.set(-4, -1.5, -2);
+  sphereLeft.position.set(-8, -1.5, -2);
   scene.add(sphereLeft);
 
-  // 右球材质
+  // 创建右侧紫色球体
   materialRight = new THREE.PointsMaterial({
     color: new THREE.Color(initialPurple),
     size: 0.02,
@@ -110,15 +120,15 @@ const initThreeJS = () => {
     opacity: 0.8,
   });
   sphereRight = new THREE.Points(geometry, materialRight);
-  sphereRight.position.set(8, 2, -3);
+  sphereRight.position.set(8, 3, -3);
   scene.add(sphereRight);
 
-  // 背景散落星点
+  // 创建背景星空粒子
   const starsGeometry = new THREE.BufferGeometry();
-  // 星点可以使用跟随主题文字的颜色，这里先用常规变量或保持白色
   const initialText = styles.getPropertyValue('--text-main').trim() || '#ffffff';
   const starsMaterial = new THREE.PointsMaterial({ color: new THREE.Color(initialText), size: 0.01 });
   const starsVertices = [];
+  
   for (let i = 0; i < 1000; i++) {
     const x = THREE.MathUtils.randFloatSpread(20);
     const y = THREE.MathUtils.randFloatSpread(20);
@@ -129,10 +139,11 @@ const initThreeJS = () => {
   const starField = new THREE.Points(starsGeometry, starsMaterial);
   scene.add(starField);
 
-  // 底部横向波浪粒子
+  // 创建底部波浪粒子
   const waveGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(AMOUNTX * AMOUNTZ * 3);
   let i = 0;
+  
   for (let ix = 0; ix < AMOUNTX; ix++) {
     for (let iz = 0; iz < AMOUNTZ; iz++) {
       positions[i] = ix * SEPARATION - ((AMOUNTX * SEPARATION) / 2);
@@ -143,7 +154,6 @@ const initThreeJS = () => {
   }
   waveGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   
-  // 波浪材质
   waveMaterial = new THREE.PointsMaterial({
     color: new THREE.Color(initialCyan),
     size: 0.04,
@@ -155,13 +165,15 @@ const initThreeJS = () => {
   waveParticles.position.z = -2;
   scene.add(waveParticles);
 
+  // 监听窗口大小变化
   window.addEventListener('resize', onWindowResize);
 };
 
-// 驱动波浪流动 (保持你之前调好的混乱度和慢速)
+// 动画渲染循环
 const animate = () => {
   animationId = requestAnimationFrame(animate);
   
+  // 球体自转动画
   if (sphereLeft) {
     sphereLeft.rotation.y += 0.003;
     sphereLeft.rotation.x += 0.002;
@@ -171,6 +183,7 @@ const animate = () => {
     sphereRight.rotation.z += 0.001;
   }
 
+  // 波浪起伏动画
   if (waveParticles) {
     const positions = waveParticles.geometry.attributes.position.array as Float32Array;
     let i = 0;
@@ -191,45 +204,49 @@ const animate = () => {
   renderer.render(scene, camera);
 };
 
+// 处理窗口自适应
 const onWindowResize = () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 };
 
+// 组件挂载时执行
 onMounted(() => {
   initThreeJS();
   animate();
 
-  // 4. 【核心新增】创建 MutationObserver 监听 HTML 的属性变化
+  // 创建监听器监控主题属性变化
   themeObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.attributeName === 'data-theme') {
-        // 当 data-theme 发生改变时，触发 Three.js 材质颜色更新
         updateThreeColors();
       }
     });
   });
 
-  // 开始监听 html 标签的属性
+  // 绑定监听器到HTML根节点
   themeObserver.observe(document.documentElement, {
     attributes: true,
     attributeFilter: ['data-theme']
   });
 });
 
+// 组件卸载前清理资源
 onBeforeUnmount(() => {
   window.removeEventListener('resize', onWindowResize);
   cancelAnimationFrame(animationId);
   if (renderer) renderer.dispose();
 
-  // 5. 【新增】组件销毁时断开监听，防止内存泄漏
+  // 断开主题监听器
   if (themeObserver) {
     themeObserver.disconnect();
   }
 });
 </script>
+
 <style scoped>
+/* 页面主容器样式 */
 .dashboard-wrapper {
   position: relative;
   width: 100vw;
@@ -238,20 +255,21 @@ onBeforeUnmount(() => {
   color: var(--text-main);
   font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
   
-  /* 👇 新增：设置背景图片 👇 */
-  background-image: url('@/assets/bg-dark-copy.png'); /* 注意路径是否匹配你的项目结构 */
-  background-size: cover;       /* 让图片按比例缩放并完全覆盖整个屏幕 */
-  background-position: center;  /* 确保图片居中 */
-  background-repeat: no-repeat; /* 防止图片重复平铺 */
-  background-color: var(--bg-dark); /* 作为图片加载前的底色 */
+  /* 深色主题背景配置 */
+  background-image: url('@/assets/bg-dark.png'); 
+  background-size: cover;      
+  background-position: center;  
+  background-repeat: no-repeat; 
+  background-color: var(--bg-dark); 
   transition: background-image 0.3s ease;
 }
 
-/* 👇 新增：处理浅色模式兼容 👇 */
-/* 当全局 html 被设置 data-theme="light" 时，取消这个深色背景图 */
+/* 浅色主题下隐藏深色背景图 */
 :global([data-theme="light"]) .dashboard-wrapper {
-  background-image: none; /* 浅色模式下移除图片，退回到你的纯色/浅色渐变背景 */
+  background-image: none; 
 }
+
+/* 3D画布容器样式 */
 .canvas-container {
   position: absolute;
   top: 0;
@@ -260,6 +278,8 @@ onBeforeUnmount(() => {
   height: 100%;
   z-index: 0;
 }
+
+/* UI交互层样式 */
 .ui-layer {
   position: absolute;
   top: 0;
@@ -269,33 +289,35 @@ onBeforeUnmount(() => {
   z-index: 10;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* 让所有内容垂直居中，留出上下呼吸空间 */
+  justify-content: center; 
   pointer-events: none;
   padding: 8vh 10% 0 10%;
 }
+
+/* 恢复UI层子元素的点击事件 */
 .ui-layer > * {
   pointer-events: auto;
 }
+
+/* 核心模块卡片布局 */
 .main-modules {
   display: flex;
   justify-content: space-between;
   gap: 20px;
   margin-bottom: 20px;
-  /* flex: 1; */
 }
-/* =========================================
-   中上部科技装饰线 
-========================================= */
+
+/* 装饰分割线容器 */
 .tech-divider {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 70%;       /* 宽度不占满全屏，两边留白更聚焦 */
-  margin: 0 auto 35px auto; /* 控制与标题和下方卡片的间距 */
+  width: 70%;      
+  margin: 0 auto 35px auto; 
   opacity: 0.85;
 }
 
-/* 渐变线条基础 */
+/* 发光线条基础样式 */
 .line-glow {
   flex: 1;
   height: 2px;
@@ -304,40 +326,41 @@ onBeforeUnmount(() => {
   border-radius: 2px;
 }
 
-/* 左侧线条：从透明渐变到主题青色 */
+/* 左侧线条颜色渐变 */
 .line-glow.left {
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary-cyan) 60%, transparent));
 }
 
-/* 右侧线条：从主题青色渐变到透明 */
+/* 右侧线条颜色渐变 */
 .line-glow.right {
   background: linear-gradient(90deg, color-mix(in srgb, var(--primary-cyan) 60%, transparent), transparent);
 }
 
-/* 跑马灯流动光点 (数据流效果) */
+/* 线条跑马灯光点 */
 .line-glow::after {
   content: '';
   position: absolute;
   top: 0;
-  width: 30px; /* 光点的长度 */
+  width: 30px; 
   height: 100%;
   background: #fff;
-  box-shadow: 0 0 15px #fff, 0 0 20px var(--primary-cyan); /* 发光效果 */
+  box-shadow: 0 0 15px #fff, 0 0 20px var(--primary-cyan); 
   border-radius: 50%;
 }
 
-/* 左侧光点从左向右跑 */
+/* 左侧光点动画配置 */
 .line-glow.left::after {
   left: -30px;
   animation: data-flow-left 3s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 右侧光点从右向左跑 */
+/* 右侧光点动画配置 */
 .line-glow.right::after {
   right: -30px;
   animation: data-flow-right 3s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* 左侧光点流动关键帧 */
 @keyframes data-flow-left {
   0% { left: -10%; opacity: 0; }
   20% { opacity: 1; }
@@ -345,6 +368,7 @@ onBeforeUnmount(() => {
   100% { left: 110%; opacity: 0; }
 }
 
+/* 右侧光点流动关键帧 */
 @keyframes data-flow-right {
   0% { right: -10%; opacity: 0; }
   20% { opacity: 1; }
@@ -352,7 +376,7 @@ onBeforeUnmount(() => {
   100% { right: 110%; opacity: 0; }
 }
 
-/* 中间的菱形核心节点 */
+/* 中心装饰节点容器 */
 .center-node {
   position: relative;
   width: 50px;
@@ -363,7 +387,7 @@ onBeforeUnmount(() => {
   margin: 0 15px;
 }
 
-/* 实心发光小菱形 */
+/* 中心发光菱形 */
 .diamond {
   width: 8px;
   height: 8px;
@@ -374,7 +398,7 @@ onBeforeUnmount(() => {
   z-index: 2;
 }
 
-/* 外层扩散的脉冲菱形 */
+/* 脉冲向外扩散的菱形 */
 .diamond.pulse {
   background: transparent;
   border: 1px solid var(--primary-cyan);
@@ -382,6 +406,7 @@ onBeforeUnmount(() => {
   z-index: 1;
 }
 
+/* 菱形脉冲关键帧 */
 @keyframes pulse-ring {
   0% { transform: rotate(45deg) scale(1); opacity: 1; }
   100% { transform: rotate(45deg) scale(3.5); opacity: 0; }
